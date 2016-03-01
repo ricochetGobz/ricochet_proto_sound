@@ -15,13 +15,6 @@ ricochetCube::ricochetCube(ofPoint _pos, int _id){
     pos = _pos;
     cubeId = _id;
     
-    fftSmoothed = new float[8192];
-    for (int i = 0; i < 8192; i++){
-        fftSmoothed[i] = 0;
-    }
-    
-    nBandsToGet = 128;
-    
     /// SOUNDS INIT ////
     //sounds.push_back(*new ofSoundPlayer);
     vector< ofSoundPlayer>::iterator itSounds = sounds.begin();
@@ -35,7 +28,7 @@ ricochetCube::ricochetCube(ofPoint _pos, int _id){
     }
 }
 
-void ricochetCube::draw() {
+void ricochetCube::draw(float * fftSmoothed) {
     ofFill();
     ofSetColor(fftSmoothed[0],fftSmoothed[50]*50,fftSmoothed[100]*100*25);
     ofDrawRectangle(pos,250,250);
@@ -53,18 +46,5 @@ void ricochetCube::play(int soundId){
 }
 
 void ricochetCube::update() {
-//    float *test = ofSoundGetSpectrum(512);
-//    color = floor((float)250*(*test));
-//    cout << color << endl;
     
-    float * val = ofSoundGetSpectrum(nBandsToGet);		// request 128 values for fft
-    for (int i = 0;i < nBandsToGet; i++){
-        
-        // let the smoothed calue sink to zero:
-        fftSmoothed[i] *= 0.96f;
-        
-        // take the max, either the smoothed or the incoming:
-        if (fftSmoothed[i] < val[i]) fftSmoothed[i] = val[i] * 255;
-        
-    }
 }

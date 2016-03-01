@@ -19,17 +19,13 @@ public:
     ricochetCube(ofPoint _pos, int _id);
     
     // Methods
-    void draw();
+    void draw(float * fftSmoothed);
     void update();
     void loadSound(string soundPath, int soudId);
     void play(int soundId);
     
     ofPoint pos;
     int cubeId;
-    
-    float color = 1.0;
-    float * fftSmoothed;
-    int nBandsToGet;
     
     /* VECTORS */
     vector<button> buttons;

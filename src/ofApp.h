@@ -22,8 +22,11 @@ class ofApp : public ofBaseApp{
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
         void createEcho();
+        float * translateSoundFrequency();
     
-            
+        float * fftSmoothed;
+        int nBandsToGet;
+    
         bool mouseDown = false;
         int buttonPressed;
     

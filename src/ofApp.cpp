@@ -15,6 +15,13 @@ void ofApp::setup(){
     /// Graphisme init  ///
     ofSetCircleResolution(60);
     
+    fftSmoothed = new float[8192];
+    for (int i = 0; i < 8192; i++){
+        fftSmoothed[i] = 0;
+    }
+    
+    nBandsToGet = 128;
+    
     cubes.push_back(*new ricochetCube(ofPoint(400, 250),0));
 }
 
@@ -24,12 +31,12 @@ void ofApp::update(){
     for(vector<echo>::iterator it = echoes.begin(); it != echoes.end(); ++it){
         (*it).expand();
     }
-    cubes[0].update();
+    translateSoundFrequency();
 }
 
 //--------------------------------------------------------------
 void ofApp::draw(){
-    cubes[0].draw();
+    cubes[0].draw(fftSmoothed);
     for(vector<echo>::iterator it = echoes.begin(); it != echoes.end(); ++it){
         (*it).draw();
     }
@@ -105,6 +112,23 @@ void ofApp::dragEvent(ofDragInfo dragInfo){
 
 }
 
+//--------------------------------------------------------------
 void ofApp::createEcho(){
     echoes.push_back(*new echo(ofPoint(525, 375)));
+}
+
+//--------------------------------------------------------------
+
+float * ofApp::translateSoundFrequency() {
+    float * val = ofSoundGetSpectrum(nBandsToGet);		// request 128 values for fft
+    for (int i = 0;i < nBandsToGet; i++){
+        
+        // let the smoothed calue sink to zero:
+        fftSmoothed[i] *= 0.96f;
+        
+        // take the max, either the smoothed or the incoming:
+        if (fftSmoothed[i] < val[i]) fftSmoothed[i] = val[i] * 255;
+        
+    }
+    return fftSmoothed;
 }
